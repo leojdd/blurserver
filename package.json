@@ -1,0 +1,21 @@
+{
+  "name": "blur-project",
+  "version": "1.0.0",
+  "description": "BLUR Project - All Against Cheats",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "blur-project"
+  },
+  "author": "Leonardo de Jesus",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.12.3",
+    "nodemailer": "^6.6.0",
+    "rand-token": "^1.0.1"
+  }
+}
