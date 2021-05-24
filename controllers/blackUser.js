@@ -65,7 +65,11 @@ exports.getUsersNotExported = async () => {
         exported: false
     }
 
-    return await blackUserModel.find(query).exec();
+    try {
+        return await blackUserModel.find(query).exec();
+    } catch (ex) {
+        console.log(ex);
+    }
 }
 
 exports.markUsersAsExported = async (users) => {
@@ -75,7 +79,11 @@ exports.markUsersAsExported = async (users) => {
         }
     }
 
-    await blackUserModel.updateMany(query, { $set: { exported: true } })
+    try {
+        await blackUserModel.updateMany(query, { $set: { exported: true } })
+    } catch (ex) {
+        console.log(ex);
+    }
 }
 
 var findSpecificUser = async (email, phone) => {
@@ -86,7 +94,11 @@ var findSpecificUser = async (email, phone) => {
         ]
     }
 
-    return await blackUserModel.findOne(query).exec();
+    try {
+        return await blackUserModel.findOne(query).exec();
+    } catch (ex) {
+        console.log(ex);
+    }
 }
 
 var findUser = async (email, phone) => {
@@ -97,7 +109,11 @@ var findUser = async (email, phone) => {
         ]
     }
 
-    return await blackUserModel.findOne(query).exec();
+    try{
+        return await blackUserModel.findOne(query).exec();
+    } catch (ex) {
+        console.log(ex);
+    }
 }
 
 var createBlackUser = async (email, phone, company) => {
@@ -121,9 +137,13 @@ var createBlackUser = async (email, phone, company) => {
         }
     })
 
-    await companyController.updateExposedUsersInCompany(company);
-
-    return 'Great, the user was added in black list';
+    try {
+        await companyController.updateExposedUsersInCompany(company);
+        return { success: true };
+    } catch (ex) {
+        console.log(ex);
+        return { success: false };
+    }
 }
 
 var verifyEmail = async (email) => {
@@ -144,10 +164,14 @@ var updateCompaniesOfBlackUser = async (user, company) => {
         }
 
         user.companies.push(companyToSave);
-        await blackUserModel.updateOne({ _id: user._id }, { companies: user.companies });
 
-        await companyController.updateExposedUsersInCompany(company);
+        try {
+            await blackUserModel.updateOne({ _id: user._id }, { companies: user.companies });
+            await companyController.updateExposedUsersInCompany(company);
+            return { success: true };
+        } catch (ex) {
+            console.log(ex);
+            return { success: false };
+        }
     }
-
-    return 'Great, the user was updated in black list';
 }
