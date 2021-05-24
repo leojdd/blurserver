@@ -1,6 +1,6 @@
 // Set up mongoose connection
 const mongoose = require('mongoose');
-const query = 'mongodb://localhost:27017/blurproject';
+const query = 'mongodb://localhost:27017/blurserver';
 const options = {
     useUnifiedTopology: true,
     useNewUrlParser: true

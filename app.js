@@ -1,11 +1,12 @@
 const express = require('express');
+const schedule = require('node-schedule');
 const app = express();
 const port = 3001;
 
 const mongoConnect = require('./models/mongoConnect');
 
+var blackUserCronService = require('./blackUsersCronService');
 var blackUserRoute = require('./routes/blackUser');
-var companyRoute = require('./routes/company');
 
 //#region initial configs
 
@@ -13,13 +14,15 @@ app.use(express.json());
 
 mongoConnect.connect();
 
+schedule.scheduleJob('10 * * * *', blackUserCronService.run);
+
+blackUserCronService.run();
+
 //#endregion
 
 //#region endpoints
 
 app.use('/blackUser', blackUserRoute);
-
-app.use('/company', companyRoute);
 
 //#endregion
 

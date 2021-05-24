@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 var blackUserModel = require('../models/blackUser');
 
 var companyController = require('./company');
-var phraseControlller = require('../controllers/phrase');
 
 exports.blackUserReport = async (req, res) => {
     var token = req.body.token;
@@ -61,45 +60,22 @@ exports.verifyUser = async (req, res) => {
     );
 };
 
-exports.findBlackUser = async (req, res) => {
-    var query = { email: req.body.email }
-
-    var blackUser = await blackUserModel.findOne(query).exec();
-
-    if (blackUser) {
-        var companiesList = blackUser.companies.map((item) => { return item.name });
-
-        var companiesString = '';
-
-        companiesList.sort().forEach((companyItem) => {
-            if (companiesString) {
-                companiesString += ', ';
-            }
-
-            companiesString += companyItem;
-        });
-
-        res.send({
-            email: blackUser.email,
-            companies: companiesString
-        });
-
-        return;
+exports.getUsersNotExported = async () => {
+    var query = {
+        exported: false
     }
 
-    res.send(false);
+    return await blackUserModel.find(query).exec();
 }
 
-exports.getCountBlackUsers = async (req, res) => {
-    var result = await blackUserModel.countDocuments({}).exec();
+exports.markUsersAsExported = async (users) => {
+    var query = {
+        _id: {
+            $in: users.map(item => item._id)
+        }
+    }
 
-    var language = req.body.language ? req.body.language : "EN-US";
-
-    var phraseObj = await phraseControlller.findPhrase(5, language);
-
-    var phrase = phraseObj.phrase.replace('[qty]', result);
-
-    res.send(phrase);
+    await blackUserModel.updateMany(query, { $set: { exported: true } })
 }
 
 var findSpecificUser = async (email, phone) => {
@@ -134,7 +110,8 @@ var createBlackUser = async (email, phone, company) => {
         {
             email: email,
             phone: phone,
-            companies: [companyToSave]
+            companies: [companyToSave],
+            exported: false
         }
     );
 
