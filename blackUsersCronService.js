@@ -25,7 +25,8 @@ var parseUsersToExport = async (users) => {
     for (var user of users) {
         var parsedUser = {
             email: user.email,
-            phone: user.phone
+            phone: user.phone,
+            report_date: user.report_date
         };
 
         parsedUser.companies = [];
@@ -51,7 +52,7 @@ var exportUsers = async (users) => {
     };
 
     const requestParams = {
-        url: 'http://localhost:3000/blackUser/exportBlackUsers',
+        url: 'http://www.blurproject.com/blackUser/exportBlackUsers',
         body: body,
         json: true
     };

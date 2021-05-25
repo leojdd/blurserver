@@ -127,6 +127,7 @@ var createBlackUser = async (email, phone, company) => {
             email: email,
             phone: phone,
             companies: [companyToSave],
+            report_date: new Date(),
             exported: false
         }
     );
@@ -174,4 +175,6 @@ var updateCompaniesOfBlackUser = async (user, company) => {
             return { success: false };
         }
     }
+
+    return { success: true };
 }
