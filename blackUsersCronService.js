@@ -52,7 +52,7 @@ var exportUsers = async (users) => {
     };
 
     const requestParams = {
-        url: 'http://www.blurproject.com/blackUser/exportBlackUsers',
+        url: 'http://54.233.236.57:3000/blackUser/exportBlackUsers',
         body: body,
         json: true
     };
