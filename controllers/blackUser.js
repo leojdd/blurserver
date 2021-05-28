@@ -10,7 +10,7 @@ exports.blackUserReport = async (req, res) => {
     var company = await companyController.getByToken(token);
 
     if (!company) {
-        res.send('Sorry, invalid token!!!');
+        res.send({success: false, message: 'Sorry, invalid token!!!' });
         return;
     }
 
@@ -40,7 +40,7 @@ exports.verifyUser = async (req, res) => {
     var company = await companyController.getByToken(token);
 
     if (!company) {
-        res.send('Sorry, invalid token!!!');
+        res.send({ success: false, message: 'Sorry, invalid token!!!' });
         return;
     }
 
@@ -55,6 +55,7 @@ exports.verifyUser = async (req, res) => {
 
     res.send(
         {
+            success: true,
             userInBlackList: user != null
         }
     );
@@ -69,6 +70,7 @@ exports.getUsersNotExported = async () => {
         return await blackUserModel.find(query).exec();
     } catch (ex) {
         console.log(ex);
+        return { success: false, message: 'Internal error' };
     }
 }
 
@@ -83,6 +85,7 @@ exports.markUsersAsExported = async (users) => {
         await blackUserModel.updateMany(query, { $set: { exported: true } })
     } catch (ex) {
         console.log(ex);
+        return { success: false, message: 'Internal error' };
     }
 }
 
@@ -98,6 +101,7 @@ var findSpecificUser = async (email, phone) => {
         return await blackUserModel.findOne(query).exec();
     } catch (ex) {
         console.log(ex);
+        return { success: false, message: 'Internal error' };
     }
 }
 
@@ -113,6 +117,7 @@ var findUser = async (email, phone) => {
         return await blackUserModel.findOne(query).exec();
     } catch (ex) {
         console.log(ex);
+        return { success: false, message: 'Internal error' };
     }
 }
 
@@ -134,22 +139,22 @@ var createBlackUser = async (email, phone, company) => {
 
     blackUserObj.save(function (err) {
         if (err) {
-            return err;
+            return { success: false, message: 'Internal error' };
         }
     })
 
     try {
         await companyController.updateExposedUsersInCompany(company);
-        return { success: true };
+        return { success: true, message: 'OK' };
     } catch (ex) {
         console.log(ex);
-        return { success: false };
+        return { success: false, message: 'Internal error' };
     }
 }
 
 var verifyEmail = async (email) => {
     if (!email || !email.includes('@')) {
-        return 'Please, type it a valid email!!!';
+        return { success: false, message: 'Please, type it a valid email!!!' };
     }
 
     return true;
@@ -169,12 +174,12 @@ var updateCompaniesOfBlackUser = async (user, company) => {
         try {
             await blackUserModel.updateOne({ _id: user._id }, { companies: user.companies });
             await companyController.updateExposedUsersInCompany(company);
-            return { success: true };
+            return { success: true, message: 'OK' };
         } catch (ex) {
             console.log(ex);
-            return { success: false };
+            return { success: false, message: 'Internal error' };
         }
     }
 
-    return { success: true };
+    return { success: true, message: 'OK' };
 }
